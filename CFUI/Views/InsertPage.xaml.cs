@@ -1,6 +1,4 @@
-﻿using CFUI.ViewModels;
-using MahApps.Metro.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,17 +13,20 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CFUI
+namespace CFUI.Views
 {
     /// <summary>
-    /// MainWindow.xaml 的交互逻辑
+    /// InsertPage.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : MetroWindow
+    public partial class InsertPage : UserControl
     {
-        public MainWindow()
+        public InsertPage()
         {
             InitializeComponent();
-            this.DataContext = new MainWindowViewModel();
+        }
+        private void MsgTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            MsgTextBox.ScrollToEnd();
         }
     }
 }

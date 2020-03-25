@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="CFUI.Views.InsertPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CFUI.Views"             
+             mc:Ignorable="d" 
+             d:DesignHeight="540" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <GroupBox Header="数据录入">
+            <Grid>
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="姓名" Width="50" VerticalAlignment="Center" Margin="10,0,0,0"></TextBlock>
+                        <TextBox Text="{Binding DATA0}" Width="100"></TextBox>
+                        <TextBlock Text="工号" Width="50" VerticalAlignment="Center" Margin="10,0,0,0"></TextBlock>
+                        <TextBox Text="{Binding OPERATORID}" Width="100"></TextBox>
+                        <TextBlock Text="料号" Width="50" VerticalAlignment="Center" Margin="10,0,0,0"></TextBlock>
+                        <TextBox Text="{Binding PARTNUM}" Width="100"></TextBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,10">
+                        <TextBlock Text="卡条码" Width="50" VerticalAlignment="Center" Margin="10,0,0,0"></TextBlock>
+                        <TextBox Text="{Binding BARCODE}" Width="200"></TextBox>
+                        <TextBlock Text="权限" Width="50" VerticalAlignment="Center" Margin="10,0,0,0"></TextBlock>
+                        <CheckBox Content="PASS" IsChecked="{Binding RESULT}"></CheckBox>
+                    </StackPanel>
+                </StackPanel>
+                <Canvas>
+                    <Button Style="{StaticResource AccentedSquareButtonStyle}" Canvas.Bottom="60" Canvas.Right="160" Width="40" Height="40" Content="录入" Command="{Binding EntryInformationCommand}"></Button>
+                </Canvas>
+            </Grid>
+        </GroupBox>
+        <TextBox Grid.Row="1" VerticalAlignment="Stretch" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" Margin="1" x:Name="MsgTextBox" IsReadOnly="True" TextChanged="MsgTextBox_TextChanged"  FontSize="14" Background="Black" FontFamily="宋体" Foreground="White" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Text="{Binding MessageStr}"></TextBox>
+    </Grid>
+</UserControl>

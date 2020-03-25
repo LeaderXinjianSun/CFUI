@@ -1,12 +1,24 @@
-﻿<Window x:Class="CFUI.MainWindow"
+﻿<Controls:MetroWindow x:Class="CFUI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CFUI"
+        xmlns:Views="clr-namespace:CFUI.Views"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="鹏鼎(淮安)刷卡客户端" Icon="member_card_64px_1231951_easyicon.net.ico" Height="600" Width="800" WindowStartupLocation ="CenterScreen" ResizeMode="CanResize">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Menu VerticalAlignment="Center">
+            <MenuItem Header="主页" Command="{Binding MenuActionCommand}" CommandParameter="0"></MenuItem>
+            <MenuItem Header="录入" Command="{Binding MenuActionCommand}" CommandParameter="1"></MenuItem>
+        </Menu>
+        <Views:HomePage Grid.Row="1" Visibility="{Binding HomePageVisibility}"></Views:HomePage>
+        <Views:InsertPage Grid.Row="1" Visibility="{Binding InsertPageVisibility}"></Views:InsertPage>
     </Grid>
-</Window>
+</Controls:MetroWindow>
