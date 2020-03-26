@@ -204,12 +204,13 @@ namespace CFUI.ViewModels
                                     SXJLibrary.Oracle oraDB = new SXJLibrary.Oracle("qddb04.eavarytech.com", "mesdb04", "ictdata", "ictdata*168");
                                     if (oraDB.isConnect())
                                     {
-                                        string stm = string.Format("UPDATE CAP_TABLE SET TRESULT = '{1}',OPERATORID = '{2}',SDATE = '{3}',STIME = '{4}',DATA0 = '{5}',PARTNUM = '{6}' WHERE BARCODE = '{0}'"
-                                            , BARCODE, OPERATORID, DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), DATA0, PARTNUM);
+                                        string stm = string.Format("UPDATE CAP_TABLE SET RESULT = '{1}',OPERATORID = '{2}',SDATE = '{3}',STIME = '{4}',DATA0 = '{5}',PARTNUM = '{6}' WHERE BARCODE = '{0}'"
+                                            , BARCODE, Rst, OPERATORID, DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), DATA0, PARTNUM);
                                         int updaterst = oraDB.executeNonQuery(stm);
                                         if (updaterst > 0)
                                         {
                                             AddMessage("更新卡信息成功" + updaterst.ToString());
+                                            oraDB.executeNonQuery("COMMIT");
                                             DATA0 = "";
                                             OPERATORID = "";
                                             BARCODE = "";
@@ -217,12 +218,13 @@ namespace CFUI.ViewModels
                                         }
                                         else
                                         {
-                                            stm = string.Format("INSERT INTO CAP_TABLE (BARCODE,TRESULT,OPERATORID,SDATE,STIME,DATA0,PARTNUM) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}')"
+                                            stm = string.Format("INSERT INTO CAP_TABLE (BARCODE,RESULT,OPERATORID,SDATE,STIME,DATA0,PARTNUM) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}')"
                                                             , BARCODE, Rst, OPERATORID, DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), DATA0, PARTNUM);
                                             int insertrst = oraDB.executeNonQuery(stm);
                                             if (insertrst > 0)
                                             {
                                                 AddMessage("录入卡信息成功" + insertrst.ToString());
+                                                oraDB.executeNonQuery("COMMIT");
                                                 DATA0 = "";
                                                 OPERATORID = "";
                                                 BARCODE = "";
@@ -369,6 +371,7 @@ namespace CFUI.ViewModels
                                             if (updaterst > 0)
                                             {
                                                 AddMessage("更新刷卡机台" + MNO + " " + updaterst.ToString());
+                                                oraDB.executeNonQuery("COMMIT");
                                             }
                                             else
                                             {
@@ -376,6 +379,7 @@ namespace CFUI.ViewModels
                                                     barcode, (string)dr["RESULT"], (string)dr["OPERATORID"], DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), MNO);
                                                 int insertrst = oraDB.executeNonQuery(stm);
                                                 AddMessage("插入刷卡机台" + MNO + " " + insertrst.ToString());
+                                                oraDB.executeNonQuery("COMMIT");
                                             }
                                         }
                                         else
