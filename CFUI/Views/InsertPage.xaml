@@ -15,16 +15,20 @@
             <Grid>
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="姓名" Width="50" VerticalAlignment="Center" Margin="10,0,0,0"></TextBlock>
-                        <TextBox Text="{Binding DATA0}" Width="100"></TextBox>
-                        <TextBlock Text="工号" Width="50" VerticalAlignment="Center" Margin="10,0,0,0"></TextBlock>
-                        <TextBox Text="{Binding OPERATORID}" Width="100"></TextBox>
-                        <TextBlock Text="料号" Width="50" VerticalAlignment="Center" Margin="10,0,0,0"></TextBlock>
-                        <TextBox Text="{Binding PARTNUM}" Width="100"></TextBox>
+                        <TextBlock Text="姓名" Width="50" VerticalAlignment="Top" Margin="10,0,0,0"></TextBlock>
+                        <TextBox Text="{Binding DATA0}" Width="100" Height="30" VerticalAlignment="Top"></TextBox>
+                        <TextBlock Text="工号" Width="50" VerticalAlignment="Top" Margin="10,0,0,0"></TextBlock>
+                        <TextBox Text="{Binding OPERATORID}" Width="100" Height="30" VerticalAlignment="Top"></TextBox>
+                        <TextBlock Text="料号" Width="50" VerticalAlignment="Top" Margin="10,0,0,0"></TextBlock>
+                        <ListBox HorizontalAlignment="Left" ItemsSource="{Binding PARTNUMItems}" SelectedIndex="{Binding PARTNUMItemsSelectedIndex}" Width="100" Height="150"></ListBox>
+                        <StackPanel Orientation="Vertical">
+                            <Button Content="+" Margin="1" Width="30" Command="{Binding AddPartnumCommand}"></Button>
+                            <Button Content="-" Margin="1" Width="30" Command="{Binding DeletePartnumCommand}"></Button>
+                        </StackPanel>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,10">
                         <TextBlock Text="卡条码" Width="50" VerticalAlignment="Center" Margin="10,0,0,0"></TextBlock>
-                        <TextBox Text="{Binding BARCODE}" Width="200"></TextBox>
+                        <TextBox Text="{Binding BARCODE}" Width="200" Height="30"></TextBox>
                         <TextBlock Text="权限" Width="50" VerticalAlignment="Center" Margin="10,0,0,0"></TextBlock>
                         <CheckBox Content="PASS" IsChecked="{Binding RESULT}"></CheckBox>
                     </StackPanel>

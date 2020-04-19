@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 using 读写器530SDK;
 using SXJLibrary;
 using System.Data;
+using System.Collections.ObjectModel;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace CFUI.ViewModels
 {
@@ -49,17 +52,29 @@ namespace CFUI.ViewModels
                 this.RaisePropertyChanged("InsertPageVisibility");
             }
         }
-        private string pARTNUM1;
+        //private string pARTNUM1;
 
-        public string PARTNUM1
+        //public string PARTNUM1
+        //{
+        //    get { return pARTNUM1; }
+        //    set
+        //    {
+        //        pARTNUM1 = value;
+        //        this.RaisePropertyChanged("PARTNUM1");
+        //    }
+        //}
+        private string mNO;
+
+        public string MNO
         {
-            get { return pARTNUM1; }
+            get { return mNO; }
             set
             {
-                pARTNUM1 = value;
-                this.RaisePropertyChanged("PARTNUM1");
+                mNO = value;
+                this.RaisePropertyChanged("MNO");
             }
         }
+
         private string mNOContent;
 
         public string MNOContent
@@ -104,17 +119,17 @@ namespace CFUI.ViewModels
                 this.RaisePropertyChanged("OPERATORID");
             }
         }
-        private string pARTNUM;
+        //private string pARTNUM;
 
-        public string PARTNUM
-        {
-            get { return pARTNUM; }
-            set
-            {
-                pARTNUM = value;
-                this.RaisePropertyChanged("PARTNUM");
-            }
-        }
+        //public string PARTNUM
+        //{
+        //    get { return pARTNUM; }
+        //    set
+        //    {
+        //        pARTNUM = value;
+        //        this.RaisePropertyChanged("PARTNUM");
+        //    }
+        //}
         private string bARCODE;
 
         public string BARCODE
@@ -137,12 +152,70 @@ namespace CFUI.ViewModels
                 this.RaisePropertyChanged("RESULT");
             }
         }
+        private ObservableCollection<String> pARTNUMItems;
+
+        public ObservableCollection<String> PARTNUMItems
+        {
+            get { return pARTNUMItems; }
+            set
+            {
+                pARTNUMItems = value;
+                this.RaisePropertyChanged("PARTNUMItems");
+            }
+        }
+        private int pARTNUMItemsSelectedIndex;
+
+        public int PARTNUMItemsSelectedIndex
+        {
+            get { return pARTNUMItemsSelectedIndex; }
+            set
+            {
+                pARTNUMItemsSelectedIndex = value;
+                this.RaisePropertyChanged("PARTNUMItemsSelectedIndex");
+            }
+        }
+        private bool showNewPartnumWindow;
+
+        public bool ShowNewPartnumWindow
+        {
+            get { return showNewPartnumWindow; }
+            set
+            {
+                showNewPartnumWindow = value;
+                this.RaisePropertyChanged("ShowNewPartnumWindow");
+            }
+        }
+        private bool quitAddPartnumWindow;
+
+        public bool QuitAddPartnumWindow
+        {
+            get { return quitAddPartnumWindow; }
+            set
+            {
+                quitAddPartnumWindow = value;
+                this.RaisePropertyChanged("QuitAddPartnumWindow");
+            }
+        }
+        private string newPartnum;
+
+        public string NewPartnum
+        {
+            get { return newPartnum; }
+            set
+            {
+                newPartnum = value;
+                this.RaisePropertyChanged("NewPartnum");
+            }
+        }
 
         #endregion
         #region 绑定方法
         public DelegateCommand<object> MenuActionCommand { get; set; }
         public DelegateCommand EntryInformationCommand { get; set; }
         public DelegateCommand MNOButtonCommand { get; set; }
+        public DelegateCommand AddPartnumCommand { get; set; }
+        public DelegateCommand DeletePartnumCommand { get; set; }
+        public DelegateCommand AddNewPartnumCommand { get; set; }
         #endregion
         #region 变量
         Metro metro = new Metro();
@@ -155,6 +228,9 @@ namespace CFUI.ViewModels
             this.MenuActionCommand = new DelegateCommand<object>(new Action<object>(this.MenuActionCommandExecute));
             this.EntryInformationCommand = new DelegateCommand(new Action(this.EntryInformationCommandExecute));
             this.MNOButtonCommand = new DelegateCommand(new Action(this.MNOButtonCommandExecute));
+            this.AddPartnumCommand = new DelegateCommand(new Action(this.AddPartnumCommandExecute));
+            this.DeletePartnumCommand = new DelegateCommand(new Action(this.DeletePartnumCommandExecute));
+            this.AddNewPartnumCommand = new DelegateCommand(new Action(this.AddNewPartnumCommandExecute));
             Init();
             Run();
         }
@@ -192,20 +268,25 @@ namespace CFUI.ViewModels
             {
                 if (OPERATORID != "")
                 {
-                    if (PARTNUM != "")
+                    if (PARTNUMItems.Count > 0)
                     {
                         if (BARCODE != "")
                         {
                             string Rst = RESULT ? "PASS" : "FAIL";
-                            Inifile.INIWriteValue(iniParameterPath, "System", "PARTNUM", PARTNUM);
+                            string data1 = "";
+                            foreach (var item in PARTNUMItems)
+                            {
+                                data1 += item + ";";
+                            }
+                            data1 = data1.Substring(0, data1.Length - 1);
                             await Task.Run(() => {
                                 try
                                 {
                                     SXJLibrary.Oracle oraDB = new SXJLibrary.Oracle("qddb04.eavarytech.com", "mesdb04", "ictdata", "ictdata*168");
                                     if (oraDB.isConnect())
                                     {
-                                        string stm = string.Format("UPDATE CAP_TABLE SET RESULT = '{1}',OPERATORID = '{2}',SDATE = '{3}',STIME = '{4}',DATA0 = '{5}',PARTNUM = '{6}' WHERE BARCODE = '{0}'"
-                                            , BARCODE, Rst, OPERATORID, DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), DATA0, PARTNUM);
+                                        string stm = string.Format("UPDATE CAP_TABLE SET RESULT = '{1}',OPERATORID = '{2}',SDATE = '{3}',STIME = '{4}',DATA0 = '{5}',DATA1 = '{6}' WHERE BARCODE = '{0}'"
+                                            , BARCODE, Rst, OPERATORID, DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), DATA0, data1);
                                         int updaterst = oraDB.executeNonQuery(stm);
                                         if (updaterst > 0)
                                         {
@@ -218,8 +299,8 @@ namespace CFUI.ViewModels
                                         }
                                         else
                                         {
-                                            stm = string.Format("INSERT INTO CAP_TABLE (BARCODE,RESULT,OPERATORID,SDATE,STIME,DATA0,PARTNUM) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}')"
-                                                            , BARCODE, Rst, OPERATORID, DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), DATA0, PARTNUM);
+                                            stm = string.Format("INSERT INTO CAP_TABLE (BARCODE,RESULT,OPERATORID,SDATE,STIME,DATA0,DATA1) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}')"
+                                                            , BARCODE, Rst, OPERATORID, DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), DATA0, data1);
                                             int insertrst = oraDB.executeNonQuery(stm);
                                             if (insertrst > 0)
                                             {
@@ -278,7 +359,64 @@ namespace CFUI.ViewModels
             else
             {
                 MNOIsReadOnly = true;
-                Inifile.INIWriteValue(iniParameterPath, "System", "PARTNUM1", PARTNUM1);
+                MNOContent = "Edit";
+                Inifile.INIWriteValue(iniParameterPath, "System", "MNO", MNO);
+            }
+        }
+        private void AddPartnumCommandExecute()
+        {
+            NewPartnum = "";
+            ShowNewPartnumWindow = !ShowNewPartnumWindow;
+            
+
+
+        }
+        private void AddNewPartnumCommandExecute()
+        {
+
+            if (NewPartnum != "")
+            {
+                if (!PARTNUMItems.Contains(NewPartnum))
+                {
+                    PARTNUMItems.Add(NewPartnum);
+                    WriteToJson();
+                }
+                else
+                {
+                    AddMessage("料号:" + NewPartnum + " 已存在");
+                }
+            }
+            else
+            {
+                AddMessage("请输入新料号");
+            }
+
+            QuitAddPartnumWindow = !QuitAddPartnumWindow;
+        }
+        private void DeletePartnumCommandExecute()
+        {
+            try
+            {
+                if (PARTNUMItemsSelectedIndex >= 0)
+                {
+                    if (PARTNUMItems.Count > 0)
+                    {
+                        PARTNUMItems.RemoveAt(PARTNUMItemsSelectedIndex);
+                        WriteToJson();
+                    }
+                    else
+                    {
+                        AddMessage("料号数量为0");
+                    }
+                }
+                else
+                {
+                    AddMessage("请选择要删除的料号");
+                }
+            }
+            catch (Exception ex)
+            {
+                AddMessage(ex.Message);
             }
         }
         #endregion
@@ -303,11 +441,43 @@ namespace CFUI.ViewModels
             MessageStr = "";
             MNOContent = "Edit";
             MNOIsReadOnly = true;
-            PARTNUM1 = Inifile.INIGetStringValue(iniParameterPath, "System", "PARTNUM1", "NA");
-            PARTNUM = Inifile.INIGetStringValue(iniParameterPath, "System", "PARTNUM", "NA");
+            MNO = Inifile.INIGetStringValue(iniParameterPath, "System", "MNO", "NA");
+            //PARTNUM = Inifile.INIGetStringValue(iniParameterPath, "System", "PARTNUM", "NA");
             RESULT = true;
             DATA0 = ""; OPERATORID = ""; BARCODE = "";
+            
+            try
+            {
+                using (StreamReader reader = new StreamReader(Path.Combine(System.Environment.CurrentDirectory, "Partnum.json")))
+                {
+                    string json = reader.ReadToEnd();
+                    PARTNUMItems = JsonConvert.DeserializeObject<ObservableCollection<string>>(json);
+                }
+            }
+            catch (Exception ex)
+            {
+                PARTNUMItems = new ObservableCollection<string>();
+                AddMessage(ex.Message);
+            }
             AddMessage("软件加载完成");
+        }
+        private void WriteToJson()
+        {
+            try
+            {
+                using (FileStream fs = File.Open(Path.Combine(System.Environment.CurrentDirectory, "Partnum.json"), FileMode.Create))
+                using (StreamWriter sw = new StreamWriter(fs))
+                using (JsonWriter jw = new JsonTextWriter(sw))
+                {
+                    jw.Formatting = Formatting.Indented;
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.Serialize(jw, PARTNUMItems);
+                }
+            }
+            catch (Exception ex)
+            {
+                AddMessage(ex.Message);
+            }
         }
         private async void Run()
         {
@@ -360,13 +530,13 @@ namespace CFUI.ViewModels
                                         //取查到的第一行记录，一般只有1行。如果有多行，也只取第一行。
                                         DataRow dr = dt.Rows[0];
                                         //筛选一下数据，如果我们需要的“工号”、“姓名”和“权限”对应的栏位为空，则数据不合格。
-                                        if (dr["OPERATORID"] != DBNull.Value && dr["DATA0"] != DBNull.Value && dr["RESULT"] != DBNull.Value && dr["PARTNUM"] != DBNull.Value)
+                                        if (dr["OPERATORID"] != DBNull.Value && dr["DATA0"] != DBNull.Value && dr["RESULT"] != DBNull.Value && dr["DATA1"] != DBNull.Value)
                                         {
                                             //打印出匹配到的结果，并返回给下位机。
-                                            AddMessage("工号 " + (string)dr["OPERATORID"] + " 姓名 " + (string)dr["DATA0"] + " 权限 " + (string)dr["RESULT"]);
+                                            AddMessage("工号 " + (string)dr["OPERATORID"] + " 姓名 " + (string)dr["DATA0"] + " 权限 " + (string)dr["RESULT"] + "料号 " + (string)dr["DATA1"]);
 
-                                            stm = string.Format("UPDATE CFT_DATA SET BARCODE = '{0}',TRESULT = '{1}',OPERTOR = '{2}',TESTDATE = '{3}',TESTTIME = '{4}' PARTNUM = '{6}' WHERE PARTNUM LIKE '%{5}%'",
-                                                    barcode, (string)dr["RESULT"], (string)dr["OPERATORID"], DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), PARTNUM1, (string)dr["PARTNUM"]);
+                                            stm = string.Format("UPDATE CFT_DATA SET BARCODE = '{0}',TRESULT = '{1}',OPERTOR = '{2}',TESTDATE = '{3}',TESTTIME = '{4}' CFT01 = '{6}' WHERE MNO = '{5}'",
+                                                    barcode, (string)dr["RESULT"], (string)dr["OPERATORID"], DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), MNO, (string)dr["DATA1"]);
                                             int updaterst = oraDB.executeNonQuery(stm);
                                             if (updaterst > 0)
                                             {
@@ -375,8 +545,8 @@ namespace CFUI.ViewModels
                                             }
                                             else
                                             {
-                                                stm = string.Format("INSERT INTO CFT_DATA (BARCODE,TRESULT,OPERTOR,TESTDATE,TESTTIME,PARTNUM) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}')",
-                                                    barcode, (string)dr["RESULT"], (string)dr["OPERATORID"], DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), (string)dr["PARTNUM"]);
+                                                stm = string.Format("INSERT INTO CFT_DATA (BARCODE,TRESULT,OPERTOR,TESTDATE,TESTTIME,CFT01,MNO) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}')",
+                                                    barcode, (string)dr["RESULT"], (string)dr["OPERATORID"], DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), (string)dr["DATA1"], MNO);
                                                 int insertrst = oraDB.executeNonQuery(stm);
                                                 AddMessage("插入刷卡机台" + (string)dr["PARTNUM"] + " " + insertrst.ToString());
                                                 oraDB.executeNonQuery("COMMIT");
