@@ -12,8 +12,8 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="母机台编号" VerticalAlignment="Center" Margin="10,0"></TextBlock>
-            <TextBox Width="100" IsReadOnly="{Binding MNOIsReadOnly}" VerticalContentAlignment="Center" Text="{Binding MNO}"></TextBox>
+            <TextBlock Text="料号" VerticalAlignment="Center" Margin="10,0"></TextBlock>
+            <TextBox Width="100" IsReadOnly="{Binding MNOIsReadOnly}" VerticalContentAlignment="Center" Text="{Binding PARTNUM1}"></TextBox>
         </StackPanel>
         <Canvas>
             <Button Width="60" Content="{Binding MNOContent}" Margin="10,1" Style="{StaticResource AccentedSquareButtonStyle}" Canvas.Right="10" Command="{Binding MNOButtonCommand}"></Button>

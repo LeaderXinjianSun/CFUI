@@ -49,15 +49,15 @@ namespace CFUI.ViewModels
                 this.RaisePropertyChanged("InsertPageVisibility");
             }
         }
-        private string mNO;
+        private string pARTNUM1;
 
-        public string MNO
+        public string PARTNUM1
         {
-            get { return mNO; }
+            get { return pARTNUM1; }
             set
             {
-                mNO = value;
-                this.RaisePropertyChanged("MNO");
+                pARTNUM1 = value;
+                this.RaisePropertyChanged("PARTNUM1");
             }
         }
         private string mNOContent;
@@ -278,7 +278,7 @@ namespace CFUI.ViewModels
             else
             {
                 MNOIsReadOnly = true;
-                Inifile.INIWriteValue(iniParameterPath, "System", "MNO", MNO);
+                Inifile.INIWriteValue(iniParameterPath, "System", "PARTNUM1", PARTNUM1);
             }
         }
         #endregion
@@ -303,7 +303,7 @@ namespace CFUI.ViewModels
             MessageStr = "";
             MNOContent = "Edit";
             MNOIsReadOnly = true;
-            MNO = Inifile.INIGetStringValue(iniParameterPath, "System", "MNO", "NA");
+            PARTNUM1 = Inifile.INIGetStringValue(iniParameterPath, "System", "PARTNUM1", "NA");
             PARTNUM = Inifile.INIGetStringValue(iniParameterPath, "System", "PARTNUM", "NA");
             RESULT = true;
             DATA0 = ""; OPERATORID = ""; BARCODE = "";
@@ -360,25 +360,25 @@ namespace CFUI.ViewModels
                                         //取查到的第一行记录，一般只有1行。如果有多行，也只取第一行。
                                         DataRow dr = dt.Rows[0];
                                         //筛选一下数据，如果我们需要的“工号”、“姓名”和“权限”对应的栏位为空，则数据不合格。
-                                        if (dr["OPERATORID"] != DBNull.Value && dr["DATA0"] != DBNull.Value && dr["RESULT"] != DBNull.Value)
+                                        if (dr["OPERATORID"] != DBNull.Value && dr["DATA0"] != DBNull.Value && dr["RESULT"] != DBNull.Value && dr["PARTNUM"] != DBNull.Value)
                                         {
                                             //打印出匹配到的结果，并返回给下位机。
                                             AddMessage("工号 " + (string)dr["OPERATORID"] + " 姓名 " + (string)dr["DATA0"] + " 权限 " + (string)dr["RESULT"]);
 
-                                            stm = string.Format("UPDATE CFT_DATA SET BARCODE = '{0}',TRESULT = '{1}',OPERTOR = '{2}',TESTDATE = '{3}',TESTTIME = '{4}' WHERE MNO = '{5}'",
-                                                    barcode, (string)dr["RESULT"], (string)dr["OPERATORID"], DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), MNO);
+                                            stm = string.Format("UPDATE CFT_DATA SET BARCODE = '{0}',TRESULT = '{1}',OPERTOR = '{2}',TESTDATE = '{3}',TESTTIME = '{4}' PARTNUM = '{6}' WHERE PARTNUM LIKE '%{5}%'",
+                                                    barcode, (string)dr["RESULT"], (string)dr["OPERATORID"], DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), PARTNUM1, (string)dr["PARTNUM"]);
                                             int updaterst = oraDB.executeNonQuery(stm);
                                             if (updaterst > 0)
                                             {
-                                                AddMessage("更新刷卡机台" + MNO + " " + updaterst.ToString());
+                                                AddMessage("更新刷卡机台" + (string)dr["PARTNUM"] + " " + updaterst.ToString());
                                                 oraDB.executeNonQuery("COMMIT");
                                             }
                                             else
                                             {
-                                                stm = string.Format("INSERT INTO CFT_DATA (BARCODE,TRESULT,OPERTOR,TESTDATE,TESTTIME,MNO) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}')",
-                                                    barcode, (string)dr["RESULT"], (string)dr["OPERATORID"], DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), MNO);
+                                                stm = string.Format("INSERT INTO CFT_DATA (BARCODE,TRESULT,OPERTOR,TESTDATE,TESTTIME,PARTNUM) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}')",
+                                                    barcode, (string)dr["RESULT"], (string)dr["OPERATORID"], DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), (string)dr["PARTNUM"]);
                                                 int insertrst = oraDB.executeNonQuery(stm);
-                                                AddMessage("插入刷卡机台" + MNO + " " + insertrst.ToString());
+                                                AddMessage("插入刷卡机台" + (string)dr["PARTNUM"] + " " + insertrst.ToString());
                                                 oraDB.executeNonQuery("COMMIT");
                                             }
                                         }
