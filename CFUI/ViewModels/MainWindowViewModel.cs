@@ -276,7 +276,7 @@ namespace CFUI.ViewModels
                             string data1 = "";
                             foreach (var item in PARTNUMItems)
                             {
-                                data1 += item + ";";
+                                data1 += item + ",";
                             }
                             data1 = data1.Substring(0, data1.Length - 1);
                             await Task.Run(() => {
