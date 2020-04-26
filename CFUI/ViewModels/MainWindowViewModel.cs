@@ -533,9 +533,8 @@ namespace CFUI.ViewModels
                                         if (dr["OPERATORID"] != DBNull.Value && dr["DATA0"] != DBNull.Value && dr["RESULT"] != DBNull.Value && dr["DATA1"] != DBNull.Value)
                                         {
                                             //打印出匹配到的结果，并返回给下位机。
-                                            AddMessage("工号 " + (string)dr["OPERATORID"] + " 姓名 " + (string)dr["DATA0"] + " 权限 " + (string)dr["RESULT"] + "料号 " + (string)dr["DATA1"]);
-
-                                            stm = string.Format("UPDATE CFT_DATA SET BARCODE = '{0}',TRESULT = '{1}',OPERTOR = '{2}',TESTDATE = '{3}',TESTTIME = '{4}' CFT01 = '{6}' WHERE MNO = '{5}'",
+                                            AddMessage("工号 " + (string)dr["OPERATORID"] + " 姓名 " + (string)dr["DATA0"] + " 权限 " + (string)dr["RESULT"] + " 料号 " + (string)dr["DATA1"]);
+                                            stm = string.Format("UPDATE CFT_DATA SET BARCODE = '{0}',TRESULT = '{1}',OPERTOR = '{2}',TESTDATE = '{3}',TESTTIME = '{4}', CFT01 = '{6}' WHERE MNO = '{5}'",
                                                     barcode, (string)dr["RESULT"], (string)dr["OPERATORID"], DateTime.Now.ToString("yyyyMMdd"), DateTime.Now.ToString("HHmmss"), MNO, (string)dr["DATA1"]);
                                             int updaterst = oraDB.executeNonQuery(stm);
                                             if (updaterst > 0)
